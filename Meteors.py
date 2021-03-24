@@ -37,32 +37,62 @@ def bin_to_asc(binaries):
         if(int(b,2)>32 and int(b,2)<126):
             str+=(chr(int(b,2)))
     print(str)
-    print(len(str))
+    #print(len(str))
 
 def img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos):
     binaries=[]
     bin_str=''
-    print('\n\n')
-    print(len(sky_dots_pos))
-    print(len(perpendicular_meteor_pos))
-    k=0
+    print('\n')
+    #print(len(sky_dots_pos))
+    #print(len(perpendicular_meteor_pos))
 
     # 255->1 and 0->0 removing perpendicular meteors
-    str_temp=''
+    str_temp='0'
     for s in sky_dots_pos:
         img_color_temp = img.getpixel((s[0],s[1]))
         for p in img_color_temp[:-1]:
-            if (len(str_temp)>=8):
+            if (len(str_temp)==7):
                 binaries.append(str_temp)
-                str_temp=''
+                str_temp+='0'
+            if (len(str_temp)==8):
+                binaries.append(str_temp)
+                str_temp='0'
             if (p==255):
                 str_temp+='1'
             elif (p==0):
                 str_temp+='0'
     str_temp = str_temp + '0'*(8-len(str_temp))
     binaries.append(str_temp)
-    print(len(binaries))
-    print(binaries, end= '\n')
+    print('with'+str(len(binaries)))
+    #print(binaries, end= '\n')
+    bin_to_asc(binaries)
+    k=0
+    binaries=[]
+    bin_str='0'
+    for s in sky_dots_pos:
+        water_meteor = 0
+        img_color_temp = img.getpixel((s[0],s[1]))
+        for pm in perpendicular_meteor_pos:
+            if ([s[0],s[1]] == pm):
+                water_meteor = 1
+        if(water_meteor == 0):
+            for p in img_color_temp[:-1]:
+                if (len(str_temp)==7):
+                    binaries.append(str_temp)
+                    str_temp+='0'
+                if (len(str_temp)==8):
+                    binaries.append(str_temp)
+                    str_temp='0'
+                if (p==255):
+                    str_temp+='1'
+                elif (p==0):
+                    str_temp+='0'
+        else:
+            pass
+    str_temp = str_temp + '0'*(8-len(str_temp))
+    binaries.append(str_temp)
+    print('without'+str(len(binaries)))
+    #print(binaries, end= '\n')
     bin_to_asc(binaries)
 
 def main():
@@ -159,6 +189,7 @@ def main():
             amount+=1
     img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos)
 
+    print(' ')
 
     # -- Printing results -- #
     str_temp = ['Stars', 'Ground', 'Meteors', 'Water']
@@ -168,7 +199,6 @@ def main():
 
 
 
-    print(' ')
     print(water) #surface borders of the lakes
     print('Perpendicular meteors: ', end = ' ')
     print(perpendicular_meteor)
