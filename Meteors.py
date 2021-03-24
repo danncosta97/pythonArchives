@@ -39,6 +39,28 @@ def bin_to_asc(binaries):
     print(str)
     #print(len(str))
 
+def img_to_bin2(img, sky_dots_pos, perpendicular_meteor_pos, height, width):
+    str_temp='0'
+    binaries=[]
+    for j in range (0, 399):
+        i=0
+        while (i < width):
+            img_color_temp = img.getpixel((i,j))
+            for p in img_color_temp[:-1]:
+                if (len(str_temp)==7):
+                    str_temp+='0'
+                if (len(str_temp)==8):
+                    if (str_temp != '00000000' and str_temp != '11111111'):
+                        binaries.append(str_temp)
+                    str_temp='0'
+                if (p==255 or p==0):
+                    str_temp+='1'
+                else:
+                    str_temp+='0'
+                i+=1
+    #print(binaries)
+    bin_to_asc(binaries)
+
 def img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos):
     binaries=[]
     bin_str=''
@@ -47,16 +69,69 @@ def img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos):
     #print(len(perpendicular_meteor_pos))
 
     # 255->1 and 0->0 removing perpendicular meteors
-    str_temp='0'
+    str_temp=''
     for s in sky_dots_pos:
         img_color_temp = img.getpixel((s[0],s[1]))
         for p in img_color_temp[:-1]:
             if (len(str_temp)==7):
-                binaries.append(str_temp)
-                str_temp+='0'
+                str_temp+=''
             if (len(str_temp)==8):
                 binaries.append(str_temp)
-                str_temp='0'
+                str_temp=''
+            if (p==255):
+                str_temp+='1'
+            elif (p==0):
+                str_temp+='0'
+    str_temp = str_temp + '0'*(8-len(str_temp))
+    binaries.append(str_temp)
+    print('with'+str(len(binaries)))
+    print(binaries, end= '\n')
+    bin_to_asc(binaries)
+    k=0
+    binaries=[]
+    bin_str=''
+    for s in sky_dots_pos:
+        water_meteor = 0
+        img_color_temp = img.getpixel((s[0],s[1]))
+        for pm in perpendicular_meteor_pos:
+            if ([s[0],s[1]] == pm):
+                water_meteor = 1
+        if(water_meteor == 0):
+            for p in img_color_temp[:-1]:
+                if (len(str_temp)==7):
+                    str_temp+=''
+                if (len(str_temp)==8):
+                    binaries.append(str_temp)
+                    str_temp=''
+                if (p==255):
+                    str_temp+='1'
+                elif (p==0):
+                    str_temp+='0'
+        else:
+            pass
+    str_temp = str_temp + '0'*(8-len(str_temp))
+    binaries.append(str_temp)
+    print('without'+str(len(binaries)))
+    #print(binaries, end= '\n')
+    bin_to_asc(binaries)
+
+def img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos): #change meteor code to water code
+    binaries=[]
+    bin_str=''
+    print('\n')
+    #print(len(sky_dots_pos))
+    #print(len(perpendicular_meteor_pos))
+
+    # 255->1 and 0->0 removing perpendicular meteors
+    str_temp=''
+    for s in sky_dots_pos:
+        img_color_temp = img.getpixel((s[0],s[1]))
+        for p in img_color_temp[:-1]:
+            if (len(str_temp)==7):
+                str_temp+=''
+            if (len(str_temp)==8):
+                binaries.append(str_temp)
+                str_temp=''
             if (p==255):
                 str_temp+='1'
             elif (p==0):
@@ -68,7 +143,7 @@ def img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos):
     bin_to_asc(binaries)
     k=0
     binaries=[]
-    bin_str='0'
+    bin_str=''
     for s in sky_dots_pos:
         water_meteor = 0
         img_color_temp = img.getpixel((s[0],s[1]))
@@ -78,17 +153,23 @@ def img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos):
         if(water_meteor == 0):
             for p in img_color_temp[:-1]:
                 if (len(str_temp)==7):
-                    binaries.append(str_temp)
-                    str_temp+='0'
+                    str_temp+=''
                 if (len(str_temp)==8):
                     binaries.append(str_temp)
-                    str_temp='0'
+                    str_temp=''
                 if (p==255):
                     str_temp+='1'
                 elif (p==0):
                     str_temp+='0'
         else:
-            pass
+            water_code=['0','0','1']
+            for winc in water_code:
+                if (len(str_temp)==7):
+                    str_temp+=''
+                if (len(str_temp)==8):
+                    binaries.append(str_temp)
+                    str_temp=''
+                str_temp+=winc
     str_temp = str_temp + '0'*(8-len(str_temp))
     binaries.append(str_temp)
     print('without'+str(len(binaries)))
@@ -189,6 +270,9 @@ def main():
             amount+=1
     img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos)
 
+    img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos)
+
+
     print(' ')
 
     # -- Printing results -- #
@@ -202,6 +286,8 @@ def main():
     print(water) #surface borders of the lakes
     print('Perpendicular meteors: ', end = ' ')
     print(perpendicular_meteor)
+    print()
+    img_to_bin2(img, sky_dots_pos, perpendicular_meteor_pos, height, width)
 
     del img
 
