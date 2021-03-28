@@ -1,9 +1,9 @@
 from PIL import Image
+import PIL
 import time
 
 #function to find surface borders of the lakes
-def water_finder(img, water_in, water, i, j):
-    #print('hi')
+def water_finder(img, water, i, j):
     water_qtt = i
     lake = [0]*2
     lake[0] = i
@@ -25,11 +25,23 @@ def water_finder(img, water_in, water, i, j):
     if(already_found == 0):
         lake[1]=i-1
         water.append(lake)
-        water_in = 0;
     else:
         pass
-    water_qtt = (i - 1) - water_qtt
+    water_qtt = i - water_qtt
     return (i, water_qtt)
+
+#function to get meteors that will fall on the water
+def water_meteors(meteors_pos, water):
+    perpendicular_meteor = 0
+    perpendicular_meteor_pos = []
+    for m in meteors_pos:
+        for w in water:
+            if(m[0] >= w[0] and m[0] <= w[1]): #meteors in water limits
+                perpendicular_meteor+=1
+                perpendicular_meteor_pos.append(m)
+            else:
+                pass
+    return(perpendicular_meteor, perpendicular_meteor_pos)
 
 def bin_to_asc(binaries):
     str=''
@@ -85,7 +97,7 @@ def img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos):
     str_temp = str_temp + '0'*(8-len(str_temp))
     binaries.append(str_temp)
     print('with'+str(len(binaries)))
-    print(binaries, end= '\n')
+    #print(binaries, end= '\n')
     bin_to_asc(binaries)
     k=0
     binaries=[]
@@ -115,7 +127,8 @@ def img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos):
     #print(binaries, end= '\n')
     bin_to_asc(binaries)
 
-def img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos): #change meteor code to water code
+#only perpendicular meteors
+def img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos):
     binaries=[]
     bin_str=''
     print('\n')
@@ -125,32 +138,9 @@ def img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos): #change meteor cod
     # 255->1 and 0->0 removing perpendicular meteors
     str_temp=''
     for s in sky_dots_pos:
-        img_color_temp = img.getpixel((s[0],s[1]))
-        for p in img_color_temp[:-1]:
-            if (len(str_temp)==7):
-                str_temp+=''
-            if (len(str_temp)==8):
-                binaries.append(str_temp)
-                str_temp=''
-            if (p==255):
-                str_temp+='1'
-            elif (p==0):
-                str_temp+='0'
-    str_temp = str_temp + '0'*(8-len(str_temp))
-    binaries.append(str_temp)
-    print('with'+str(len(binaries)))
-    #print(binaries, end= '\n')
-    bin_to_asc(binaries)
-    k=0
-    binaries=[]
-    bin_str=''
-    for s in sky_dots_pos:
         water_meteor = 0
         img_color_temp = img.getpixel((s[0],s[1]))
-        for pm in perpendicular_meteor_pos:
-            if ([s[0],s[1]] == pm):
-                water_meteor = 1
-        if(water_meteor == 0):
+        if(img_color_temp == (255,255,255,255)):
             for p in img_color_temp[:-1]:
                 if (len(str_temp)==7):
                     str_temp+=''
@@ -158,18 +148,26 @@ def img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos): #change meteor cod
                     binaries.append(str_temp)
                     str_temp=''
                 if (p==255):
-                    str_temp+='1'
-                elif (p==0):
                     str_temp+='0'
+                elif (p==0):
+                    str_temp+='1'
         else:
-            water_code=['0','0','1']
-            for winc in water_code:
-                if (len(str_temp)==7):
-                    str_temp+=''
-                if (len(str_temp)==8):
-                    binaries.append(str_temp)
-                    str_temp=''
-                str_temp+=winc
+            for pm in perpendicular_meteor_pos:
+                if ([s[0],s[1]] == pm):
+                    water_meteor = 1
+            if(water_meteor == 1):
+                for p in img_color_temp[:-1]:
+                    if (len(str_temp)==7):
+                        str_temp+=''
+                    if (len(str_temp)==8):
+                        binaries.append(str_temp)
+                        str_temp=''
+                    if (p==255):
+                        str_temp+='1'
+                    elif (p==0):
+                        str_temp+='0'
+            else:
+                pass
     str_temp = str_temp + '0'*(8-len(str_temp))
     binaries.append(str_temp)
     print('without'+str(len(binaries)))
@@ -181,28 +179,9 @@ def main():
     filename = "meteor_challenge_01.png" #path
     img = Image.open(filename)
 
-    '''#-- counting pure pixels -#
+    #-- counting color pixels --#
     width, height = img.size
-    img_colors = img.getcolors(width*height) #tuples (qtt(rgba))
-    #print(img_colors)
-    colors_qtd = [None]*4
-    for item in img_colors:
-        #print(item)
-        if (item[1][0] == item[1][1] and item[1][1] == item[1][2] and item[1][2] == 255): #stars
-            colors_qtd[0] = item[0]
-        if (item[1][0] == item[1][1] and item[1][1] == item[1][2] and item[1][2] == 0): #ground
-            colors_qtd[1] = item[0]
-        if (item[1][0] == 255 and item[1][1] == item[1][2] and item[1][2] == 0): #meteor
-            colors_qtd[2] = item[0]
-        if (item[1][2] == 255 and item[1][0] == item[1][1] and item[1][1] == 0): #water
-            colors_qtd[3] = item[0]
-    print(colors_qtd)'''
-
-    #-- x --#
-    width, height = img.size
-    img_colors = img.getcolors(width*height) #tuples (qtt(rgba))
     water = [] #stores "lakes" limits
-    water_in = 0 #mark water start
     colors_qtd = [0]*4 #stores the 4 pure colors
     meteors_pos = []
     stars_pos = []
@@ -230,9 +209,7 @@ def main():
                 sky_dots_pos.append([i,j])
             #blue
             elif(img_pixel[2] == 255 and img_pixel[0] == img_pixel[1] and img_pixel[1] == 0):
-                colors_qtd[3] += 1
-                water_in = 1
-                r = water_finder(img, water_in, water, i, j)
+                r = water_finder(img, water, i, j)
                 i = r[0]
                 i=i-1
                 colors_qtd[3] += r[1]
@@ -241,17 +218,11 @@ def main():
                 #print(img_pixel)
             i+=1
 
+    p_meteor_res = water_meteors(meteors_pos, water)
+    perpendicular_meteor = p_meteor_res[0]
+    perpendicular_meteor_pos = p_meteor_res[1]
 
-    perpendicular_meteor = 0
-    perpendicular_meteor_pos = []
-    for m in meteors_pos:
-        for w in water:
-            if(m[0] >= w[0] and m[0] <= w[1]): #meteors in water limits
-                perpendicular_meteor+=1
-                perpendicular_meteor_pos.append(m)
-            else:
-                pass
-    img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos)
+    #img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos)
 
     amount=0
     sky_dots_pos = []
@@ -268,14 +239,17 @@ def main():
                 pass
                 #print(img_pixel)
             amount+=1
-    img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos)
+    #img_to_bin(img, sky_dots_pos, perpendicular_meteor_pos)
 
-    img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos)
+    #img_to_bin3(img, sky_dots_pos, perpendicular_meteor_pos)
 
 
     print(' ')
 
     # -- Printing results -- #
+    print('Lakes borders', end=' ') #surface borders of the lakes
+    print(water)
+
     str_temp = ['Stars', 'Ground', 'Meteors', 'Water']
     for i in range (len(colors_qtd)):
         print(str_temp[i], end = ' ')
@@ -283,11 +257,10 @@ def main():
 
 
 
-    print(water) #surface borders of the lakes
-    print('Perpendicular meteors: ', end = ' ')
+
+    print('Perpendicular meteors', end = ' ')
     print(perpendicular_meteor)
     print()
-    img_to_bin2(img, sky_dots_pos, perpendicular_meteor_pos, height, width)
 
     del img
 
