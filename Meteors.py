@@ -250,7 +250,7 @@ def main():
     print('Lakes borders', end=' ') #surface borders of the lakes
     print(water)
 
-    str_temp = ['Stars', 'Ground', 'Meteors', 'Water']
+    str_temp = ["Stars", "Ground", "Meteors", "Water"]
     for i in range (len(colors_qtd)):
         print(str_temp[i], end = ' ')
         print(str(colors_qtd[i]))
