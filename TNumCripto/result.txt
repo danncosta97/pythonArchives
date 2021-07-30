@@ -1,0 +1,44 @@
+Pyhton 3.9.2
+
+>> Atividade 1 <<
+[29, 18, 23, 18, 10] -> encode -> [204, 18, 225, 18, 147] -> decode -> [29, 18, 23, 18, 10]
+TINIA -> encode -> ?I?I? -> decode -> TINIA
+Sistema de criptografia validado com sucesso!
+
+>> Atividade 2 <<
+(SEQUENCIA CRIPTOGRAFADA)
+[147, 9, 140, 18, 147, 73, 207, 215, 140, 214, 215, 140, 73, 122, 222, 225, 23, 147, 29]
+
+(SEQUENCIA DESCRIPTOGRAFADA)
+[10, 16, 30, 18, 10, 99, 25, 24, 30, 28, 24, 30, 99, 31, 14, 23, 17, 10, 22]
+
+Mensagem enviada:
+Dia 20 às 15horas
+AGUIA POUSOU VENHAM
+
+>> Atividade 3 <<
+(SEQUENCIA CRIPTOGRAFADA)
+[175, 134, 175, 89, 175, 48, 176, 134, 176, 243, 228, 176, 134, 176, 243, 228, 176, 185, 101, 243, 243, 241, 176, 206, 228, 176, 212, 115, 48, 175, 228]
+
+(SEQUENCIA DESCRIPTOGRAFADA)
+[65, 84, 65, 67, 65, 82, 11, 84, 11, 78, 79, 11, 84, 11, 78, 79, 11, 70, 73, 78, 78, 76, 11, 68, 79, 11, 86, 69, 82, 65, 79]
+
+Mensagem enviada:
+ATACAR T NO T NO FINNL DO VERAO
+
+>> Atividade 4 <<
+
+(SEQUENCIA CRIPTOGRAFADA)
+[147, 29, 147, 225, 23, 147, 73, 147, 214, 73]
+
+(HORARIO CRIPTOGRAFADA)
+[3033]
+
+(SEQUENCIA DESCRIPTOGRAFADA)
+[10, 22, 10, 23, 17, 10, 99, 10, 28, 99]
+
+(HORARIO DESCRIPTOGRAFADO)
+[9]
+
+Mensagem enviada:
+AMANHA AS 9
